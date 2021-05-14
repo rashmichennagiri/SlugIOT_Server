@@ -1,0 +1,7 @@
+AUTH:
+x login
+x security
+
+
+DATABASE:
+x define the tables that need to be synched "down", for settings, and procedures.

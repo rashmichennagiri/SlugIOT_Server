@@ -1,0 +1,43 @@
+[[extend "layout.html"]]
+
+<style>
+  .auth-container {
+    max-width: 80%;
+    min-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #e1e1e1;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  a.button {
+      margin-left: 10px;
+  }
+</style>
+
+
+
+<div class="container title has-text-centered">
+    Welcome to the Elements App
+</div>
+
+<div class="container">
+  <div id="vue">
+    <div class="column is-half is-offset-one-quarter" style="border : 1px solid #e1e1e1; border-radius: 10px">
+      <auth plugins="local"></auth>
+    </div>
+  </div>
+</div>
+
+
+<section class="section">
+  [[=form]]
+</section>
+
+
+
+[[block page_scripts]]
+<script src="js/utils.js"></script>
+<script src="components/auth.js"></script>
+<script>utils.app().start();</script>
+[[end]]
