@@ -1,75 +1,329 @@
 <!DOCTYPE html>
+
 <html lang="en">
-  <head>
+
+<head>
     <base href="[[=URL('static')]]/">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
-    <link rel="stylesheet" href="css/bulma.css">
-    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
-    [[block page_head]]<!-- individual pages can customize header here -->[[end]]
-  </head>
-  <body>
-    <!-- Navigation bar -->
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
+
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+
+    <link href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="
+          rel="shortcut icon"/>
+
+    <link href="css/bulma.css" rel="stylesheet">
+    <link href="font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link href="css/admin.css" rel="stylesheet">
+
+    <title>SlugIOT</title>
+
+    [[block page_head]]<!-- individual pages can customize header here --> [[end]]
+</head>
+
+
+<body>
+
+<!-- Navigation bar -->
+<nav aria-label="main navigation" class="navbar is-dark" role="navigation">
+    <div class="navbar-brand">
         <a class="navbar-item" href="[[=URL('index')]]">
-          Learn py4web
-          <!-- <img class="logo" width="150" src="images/site_icon.png"> -->
+            SlugIOT
+            <!-- <img class="logo" width="150" src="images/site_icon.png"> -->
         </a>
 
 
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="the-navbar-menu"
-           onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
+        <a aria-expanded="false" aria-label="menu" class="navbar-burger burger" data-target="the-navbar-menu"
+           onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');"
+           role="button">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
         </a>
-      </div>
+    </div>
 
-      <div id="the-navbar-menu" class="navbar-menu">
+    <div class="navbar-menu" id="the-navbar-menu">
         <div class="navbar-start">
-          [[block page_menu_items]]<!-- individual pages can add menu items here -->[[end]]
+            [[block page_menu_items]]<!-- individual pages can add menu items here --> [[end]]
         </div>
 
         <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="buttons">
-              [[if globals().get('user'):]]
-                <div class="navbar-item has-dropdown is-hoverable">
-                  <a class="navbar-link is-primary">
-                    [[=globals().get('user').get('email')]]
-                  </a>
-                  <div class="navbar-dropdown">
-                    <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
-                    <a class="navbar-item" href="[[=URL('auth/profile')]]">Profile</a>
-                    <a class="navbar-item" href="[[=URL('auth/change_password')]]">Change Password</a></li>
+            <div class="navbar-item">
+                <div class="buttons">
+                    [[if globals().get('user'):]]
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link is-primary">
+                            [[=globals().get('user').get('email')]]
+                        </a>
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
+                            <a class="navbar-item" href="[[=URL('auth/profile')]]">Profile</a>
+                            <a class="navbar-item" href="[[=URL('auth/change_password')]]">Change Password</a></li>
 
-                  </div>
+                        </div>
+                    </div>
+                    [[else:]]
+                    <a class="button is-link" href="[[=URL('auth/register')]]">Sign up</a>
+                    <a class="button is-success" href="[[=URL('auth/login')]]">Log in</a>
+                    [[pass]]
                 </div>
-              [[else:]]
-                <a class="button is-link" href="[[=URL('auth/register')]]">Sign up</a>
-                <a class="button is-success" href="[[=URL('auth/login')]]">Log in</a>
-              [[pass]]
             </div>
-          </div>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- beginning of HTML inserted by extending template -->
-    [[include]]
-    <!-- end of HTML inserted by extending template -->
+<div class="container">
+    <div class="columns">
+
+        <div class="column is-3 ">
+            <aside class="menu is-hidden-mobile">
+                <p class="menu-label">
+                    General
+                </p>
+                <ul class="menu-list">
+                    <li><a class="is-active">Dashboard</a></li>
+                    <li><a>My Profile</a></li>
+                    <!--                    <li><a>Other</a></li>-->
+                </ul>
+                <p class="menu-label">
+                    Administration
+                </p>
+                <ul class="menu-list">
+<!--                    <li><a>Manage Devices</a></li>-->
+                    <li>
+                        <a>Manage Your Devices</a>
+                        <ul>
+                            <li><a>View Devices</a></li>
+                            <li><a>Code Editor</a></li>
+                            <li><a>Register New Device</a></li>
+                            <!--                            <li><a>Remove a Device</a></li>-->
+                        </ul>
+                    </li>
+                    <!--                    <li><a>Invitations</a></li>-->
+                    <li><a>Cloud Storage Environment Settings</a></li>
+<!--                    <li><a>Authentication</a></li>-->
+                    <!--                    <li><a>Payments</a></li>-->
+                </ul>
+                <!--                <p class="menu-label">-->
+                <!--                    Transactions-->
+                <!--                </p>-->
+                <!--                <ul class="menu-list">-->
+                <!--                    <li><a>Payments</a></li>-->
+                <!--                    <li><a>Transfers</a></li>-->
+                <!--                    <li><a>Balance</a></li>-->
+                <!--                    <li><a>Reports</a></li>-->
+                <!--                </ul>-->
+            </aside>
+        </div>
+
+        <div class="column is-9">
+            <!-- beginning of HTML inserted by extending template -->
+            [[include]]
+            <!-- end of HTML inserted by extending template -->
+
+            <!--            <nav aria-label="breadcrumbs" class="breadcrumb">-->
+            <!--                <ul>-->
+            <!--                    <li><a href="../">Bulma</a></li>-->
+            <!--                    <li><a href="../">Templates</a></li>-->
+            <!--                    <li><a href="../">Examples</a></li>-->
+            <!--                    <li class="is-active"><a aria-current="page" href="#">Admin</a></li>-->
+            <!--                </ul>-->
+            <!--            </nav>-->
+
+            <!--            <section class="hero is-info welcome is-small">-->
+            <!--                <div class="hero-body">-->
+            <!--                    <div class="container">-->
+            <!--                        <h1 class="title">-->
+            <!--                            Hello Admin!-->
+            <!--                        </h1>-->
+            <!--                        <h2 class="subtitle">-->
+            <!--                            I hope you are having a great day! :)-->
+            <!--                        </h2>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </section>-->
+
+            <!--            <section class="info-tiles">-->
+            <!--                <div class="tile is-ancestor has-text-centered">-->
+            <!--                    <div class="tile is-parent">-->
+            <!--                        <article class="tile is-child box">-->
+            <!--                            <p class="title">439k</p>-->
+            <!--                            <p class="subtitle">Users</p>-->
+            <!--                        </article>-->
+            <!--                    </div>-->
+            <!--                    <div class="tile is-parent">-->
+            <!--                        <article class="tile is-child box">-->
+            <!--                            <p class="title">59k</p>-->
+            <!--                            <p class="subtitle">Products</p>-->
+            <!--                        </article>-->
+            <!--                    </div>-->
+            <!--                    <div class="tile is-parent">-->
+            <!--                        <article class="tile is-child box">-->
+            <!--                            <p class="title">3.4k</p>-->
+            <!--                            <p class="subtitle">Open Orders</p>-->
+            <!--                        </article>-->
+            <!--                    </div>-->
+            <!--                    <div class="tile is-parent">-->
+            <!--                        <article class="tile is-child box">-->
+            <!--                            <p class="title">19</p>-->
+            <!--                            <p class="subtitle">Exceptions</p>-->
+            <!--                        </article>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </section>-->
+            <!--            <div class="columns">-->
+            <!--                <div class="column is-6">-->
+            <!--                    <div class="card events-card">-->
+            <!--                        <header class="card-header">-->
+            <!--                            <p class="card-header-title">-->
+            <!--                                Events-->
+            <!--                            </p>-->
+            <!--                            <a aria-label="more options" class="card-header-icon" href="#">-->
+            <!--                  <span class="icon">-->
+            <!--                    <i aria-hidden="true" class="fa fa-angle-down"></i>-->
+            <!--                  </span>-->
+            <!--                            </a>-->
+            <!--                        </header>-->
+            <!--                        <div class="card-table">-->
+            <!--                            <div class="content">-->
+            <!--                                <table class="table is-fullwidth is-striped">-->
+            <!--                                    <tbody>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    <tr>-->
+            <!--                                        <td width="5%"><i class="fa fa-bell-o"></i></td>-->
+            <!--                                        <td>Lorum ipsum dolem aire</td>-->
+            <!--                                        <td class="level-right"><a class="button is-small is-primary"-->
+            <!--                                                                   href="#">Action</a></td>-->
+            <!--                                    </tr>-->
+            <!--                                    </tbody>-->
+            <!--                                </table>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                        <footer class="card-footer">-->
+            <!--                            <a class="card-footer-item" href="#">View All</a>-->
+            <!--                        </footer>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="column is-6">-->
+            <!--                    <div class="card">-->
+            <!--                        <header class="card-header">-->
+            <!--                            <p class="card-header-title">-->
+            <!--                                Inventory Search-->
+            <!--                            </p>-->
+            <!--                            <a aria-label="more options" class="card-header-icon" href="#">-->
+            <!--                  <span class="icon">-->
+            <!--                    <i aria-hidden="true" class="fa fa-angle-down"></i>-->
+            <!--                  </span>-->
+            <!--                            </a>-->
+            <!--                        </header>-->
+            <!--                        <div class="card-content">-->
+            <!--                            <div class="content">-->
+            <!--                                <div class="control has-icons-left has-icons-right">-->
+            <!--                                    <input class="input is-large" placeholder="" type="text">-->
+            <!--                                    <span class="icon is-medium is-left">-->
+            <!--                      <i class="fa fa-search"></i>-->
+            <!--                    </span>-->
+            <!--                                    <span class="icon is-medium is-right">-->
+            <!--                      <i class="fa fa-check"></i>-->
+            <!--                    </span>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="card">-->
+            <!--                        <header class="card-header">-->
+            <!--                            <p class="card-header-title">-->
+            <!--                                User Search-->
+            <!--                            </p>-->
+            <!--                            <a aria-label="more options" class="card-header-icon" href="#">-->
+            <!--                  <span class="icon">-->
+            <!--                    <i aria-hidden="true" class="fa fa-angle-down"></i>-->
+            <!--                  </span>-->
+            <!--                            </a>-->
+            <!--                        </header>-->
+            <!--                        <div class="card-content">-->
+            <!--                            <div class="content">-->
+            <!--                                <div class="control has-icons-left has-icons-right">-->
+            <!--                                    <input class="input is-large" placeholder="" type="text">-->
+            <!--                                    <span class="icon is-medium is-left">-->
+            <!--                      <i class="fa fa-search"></i>-->
+            <!--                    </span>-->
+            <!--                                    <span class="icon is-medium is-right">-->
+            <!--                      <i class="fa fa-check"></i>-->
+            <!--                    </span>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <!--        </div>-->
+        </div>
+    </div>
+
+
     <footer class="footer">
-      <div class="content has-text-centered">
-        Made with <a href="https://py4web.com">py4web</a>.
-        <a href="https://learn-py4web.github.io">Learn py4web!</a>
-      </div>
+        <div class="content has-text-centered">
+            Made with <a href="https://py4web.com">py4web</a>.
+            <a href="https://learn-py4web.github.io">Learn py4web!</a>
+        </div>
     </footer>
-  </body>
-  <script src="js/sugar.min.js"></script>
-  <script src="js/axios.min.js"></script>
-  <script src="js/vue.js"></script>
-  <script src="js/utils.js"></script>
-  [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
+
+</body>
+
+<script src="js/sugar.min.js"></script>
+<script src="js/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/utils.js"></script>
+
+<script async src="js/bulma.js" type="text/javascript"></script>
+
+[[block page_scripts]]<!-- individual pages can add scripts here --> [[end]]
+
 </html>

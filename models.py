@@ -7,6 +7,7 @@ from .common import db, Field, auth
 from pydal.validators import *
 import uuid
 
+
 def get_user_email():
     return auth.current_user.get('email') if auth.current_user else None
 
@@ -18,34 +19,34 @@ def get_time():
 db.define_table(
     'product',
     Field('product_name'),
-    Field('product_quantity', 'integer',
-          requires=IS_INT_IN_RANGE(0, None),
-          default=0),
-    Field('product_cost', 'float',
-          requires=IS_FLOAT_IN_RANGE(0, None), default=0.),
+    Field('product_quantity', 'integer', requires=IS_INT_IN_RANGE(0, None), default=0),
+    Field('product_cost', 'float', requires=IS_FLOAT_IN_RANGE(0, None), default=0.),
     Field('mail_order', 'boolean'),
-    # Field('created_by', default=get_user_email),
-    # Field('creation_date', 'datetime', default=get_time)
+    Field('created_by', default=get_user_email),
+    Field('creation_date', 'datetime', default=get_time)
 )
 
 # We do not want these fields to appear in forms by default:
 db.product.id.readable = False
-# db.product.created_by.readable = False
-# db.product.creation_date.readable = False
-
+db.product.created_by.readable = False
+db.product.creation_date.readable = False
 
 # To keep track of all the devices:
 db.define_table('device',
-                Field('device_id', 'string', writable=False, required=True, default=uuid.uuid4()),
-                # Field('user_email', 'string', writable=False, required=True, default=get_user_email()),
+                # Field('device_id', 'string', writable=False, required=True, default=uuid.uuid4()),
                 Field('device_name', 'string', required=True),
-                Field('description', 'text')
-)
+                Field('device_mac_address', 'string', required=True),
+                Field('device_nickname', 'string'),
+                Field('description', 'text'),
+                Field('device_added_date', 'datetime', default=get_time()),
+                Field('user_email', 'string', writable=False, required=True, default=get_user_email)
+                )
 
-db.device.id.readable = False
+# db.device.id.readable = False
+db.device.device_added_date.readable = False
+db.device.user_email.readable = False
 
-
-# db.device.name.widget = lambda f, v: SQLFORM.widgets.string.widget(f, v, _placeholder='Enter the name of device')
+# db.device.device_name.widget = lambda f, v: SQLFORM.widgets.string.widget(f, v, _placeholder='Enter the name of device')
 # db.device.description.widget = lambda f, v: SQLFORM.widgets.string.widget(f, v, _placeholder='Enter a description here')
 
 
@@ -64,8 +65,6 @@ db.define_table('procedure_revisions',
                 Field('last_update', 'datetime', default=datetime.datetime.utcnow(), required=True),
                 Field('is_stable', 'boolean', required=True)  # True for stable False for not stable
                 )
-
-
 
 ##############
 # Permission table.
@@ -95,7 +94,6 @@ db.define_table('client_setting',
                 Field('last_updated', 'datetime', update=datetime.datetime.utcnow())
                 )
 
-
 #########################
 # These tables are synched "up" from the clients to the server.
 
@@ -119,7 +117,6 @@ db.define_table('outputs',
                 Field('time_stamp', 'datetime'),
                 Field('received_time_stamp', 'datetime', default=datetime.datetime.utcnow()),
                 )
-
 
 # always commit your models to avoid problems later
 db.commit()

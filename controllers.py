@@ -33,54 +33,44 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
 
+from py4web.utils.publisher import Publisher, ALLOW_ALL_POLICY
+
+publisher = Publisher(db, policy=ALLOW_ALL_POLICY)
+
 url_signer = URLSigner(session)
 
 
-# @action('index')
-# @action.uses(db, auth, 'index.html')
-# def index():
-#     print("User:", get_user_email())
-#     return dict()
-
+@action('index')
+@action.uses(db, auth, 'index.html')
+def index():
+    print("User:", get_user_email())
+    return dict()
+    # return dict(
+    #     # COMPLETE: return here any signed URLs you need.
+    #     my_callback_url=URL('my_callback', signer=url_signer),
+    # )
 
 # --------------------------------------
 # Using the session to store information
-
-
-@action('index', method='GET')
-@action.uses('index.html')
-def index():
-    return dict()
-
-
-@action('index', method='POST')
-@action.uses(session)  # Important!  Otherwise, the changes to session are not saved.
-def post_index():
-    u = request.params.get('username')
-    session['username'] = u
-    print("You said you are:", u)
-    # We always redirect when we get a POST.
-    redirect(URL('confirmation'))
-
-
-@action('confirmation', method='GET')
-@action.uses(session, "confirmation.html")
-def confirmation():
-    for cookie_name in request.cookies.keys():
-        cookies = request.cookies.getall(cookie_name)
-        for cookie_value in cookies:
-            print("Cookie name:", cookie_name, "Cookie value:", cookie_value)
-    for k in session.keys():
-        print(k, session.get(k))
-    u = session.get('username') or 'Your username is not defined'
-    return dict(username=u)
+#
+# @action('confirmation', method='GET')
+# @action.uses(session, "confirmation.html")
+# def confirmation():
+#     for cookie_name in request.cookies.keys():
+#         cookies = request.cookies.getall(cookie_name)
+#         for cookie_value in cookies:
+#             print("Cookie name:", cookie_name, "Cookie value:", cookie_value)
+#     for k in session.keys():
+#         print(k, session.get(k))
+#     u = session.get('username') or 'Your username is not defined'
+#     return dict(username=u)
 
 
 # ------------------------------------
 # This page is accessible only to logged-in users.
 
 @action('add_product', method=['GET', 'POST'])
-@action.uses('register_device.html', session, db)  # , auth.user
+@action.uses(session, db, auth.user, 'register_device.html')
 def add_product():
     form = Form(db.device, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
@@ -90,40 +80,27 @@ def add_product():
 
 
 @action('view_products', method='GET')
-@action.uses('view_devices.html', db)
+@action.uses(session, db, auth.user, 'view_devices.html')
 def view_products():
     # We get all the table rows, via a query.
-    rows = db(db.product).select()
+    rows = db(db.device).select()
     return dict(rows=rows)
+    # return dict(grid=publisher.grid(db.device))f
 
 
-@action('edit_product/<product_id>', method=['GET', 'POST'])
-@action.uses('register_device.html', session, db, auth.user)
-def edit_product(product_id=None):
+@action('edit_product/<device_id>', method=['GET', 'POST'])
+@action.uses(session, db, auth.user, 'register_device.html')
+def edit_product(device_id=None):
     """Note that in the above declaration, the product_id argument must match
     the <product_id> argument of the @action."""
     # We read the product.
-    p = db.product[product_id]
+    p = db.device[device_id]
     if p is None:
         # Nothing to edit.  This should happen only if you tamper manually with the URL.
         redirect(URL('view_products'))
-    form = Form(db.product, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    form = Form(db.device, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         # We always want POST requests to be redirected as GETs.
         redirect(URL('view_products'))
     return dict(form=form)
 
-# @action('register', method=['GET','POST'])
-# @action.uses(db, auth, 'register_device.html')
-# def index():
-#     print("register a new device:", get_user_email())
-#     # return dict() #dont hardcode string!
-#
-#     # device = db.device[request.args(0)]
-#     # db.device.user_email.readable = False
-#     # form = SQLFORM(db.device, record=device, readonly=True)
-#     # if form.process().accepted:
-#     #     session.flash = T(form.vars.name + ' added!')
-#     #     redirect(URL('register', 'manage', vars=dict(device=device.id)))
-#
-#     return dict(form=form)
