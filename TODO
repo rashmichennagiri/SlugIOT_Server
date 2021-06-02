@@ -1,22 +1,34 @@
 DOUBTS:
 
 
+
 // TODO SERVER:
 FEATURES:
-x let user choose language for editor
+
 x pagination for output and log display tables in device.html
-x one device to have >1 procedures
 x remove 'app_device.decorate' function
+x smarter save and deploy
+
+
 x POST requests to be redirected as GETs
+
+
+x one device to have >1 procedures
+x let user choose language for editor
+
 
 
 AUTH:
 x remove menu bar during login/register
 x check that pages can be view only to logged in users (device load output urls)
 
+
+
 UI:
 x make footer smaller
 x breadcrumbs
+
+
 
 DATABASE:
 
@@ -29,6 +41,7 @@ DATABASE:
 - reduce code repitition, make common methods
 - *MIMIC DEVICE -> continuously writes to output/log files
 - add scheduler
+
 
 
 // TODO BUILD:

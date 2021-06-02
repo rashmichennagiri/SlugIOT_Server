@@ -33,7 +33,7 @@ from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email
+from .models import get_user_email, get_time
 
 # from py4web.utils.publisher import Publisher, ALLOW_ALL_POLICY
 
@@ -50,6 +50,7 @@ currently_viewing_device_id = None
 def index():
     print("in index():", get_user_email())
     return dict()
+
 
 # ------------------------------------
 # This page is accessible only to logged-in users.
@@ -90,7 +91,7 @@ def edit_product(device_id=None):
     return dict(form=form)
 
 
-@action('device/<device_id>', method=['GET', 'POST'])
+@action('device/<device_id>', method=['GET'])   # 'POST'
 @action.uses(session, db, auth.user, 'device.html')
 def view_device(device_id=None):
     global currently_viewing_device_id
@@ -102,32 +103,42 @@ def view_device(device_id=None):
         redirect(URL('view_devices'))
 
     print("device id:", currently_viewing_device_id)
-    # form = Form(db.device, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
-    # if form.accepted:
-    # We always want POST requests to be redirected as GETs.
-    # redirect(URL('device'))
-    # return dict()
+
     return dict(
         # This is the signed URL for the callback.
-        # add_proc_url=URL('add_proc', signer=url_signer),
-        # load_procs_url=URL('load_procedures', signer=url_signer),
-        # edit_proc_url=URL('edit_procedure', signer=url_signer),
-        # delete_proc_url=URL('delete_procedure', signer=url_signer),
         load_procedure_url=URL('load_procedure', signer=url_signer),
+        add_updated_procedure_url=URL('add_updated_procedure', signer=url_signer),
         load_logs_url=URL('load_logs', signer=url_signer),
         load_outputs_url=URL('load_outputs', signer=url_signer)
-
     )
 
 
 @action('load_procedure')
 @action.uses(url_signer.verify(), db)
 def load_procedure():
-    rows = db(db.procedure).select().as_list()
-    return dict()
+    # query to fetch all procedures for the given device
+    rows = db(db.procedure.device_id == currently_viewing_device_id).select(orderby=~db.procedure.last_updated).as_list()
+
+    print("\nproc[0]:")
+    print(rows[0])
+    # return only the latest procedure for the device
+    return dict(proc=rows[0])
+
+
+@action('add_updated_procedure', method="POST")
+@action.uses(url_signer.verify(), db)
+def add_updated_procedure():
+    proc_last_updated=get_time()
+    pid = db.procedure.insert(
+        device_id=currently_viewing_device_id, #request.json.get('device_id'),
+        procedure_code=request.json.get('procedure_code'),
+        last_updated=proc_last_updated
+    )
+    return dict(proc_last_updated=proc_last_updated)
+
 # db.define_table('procedure',
 #                 Field('device_id', 'reference device', required=True),
-#                 Field('procedure_id', 'string', required=True),  # key
+#                 Field('procedure_id', 'string'),  # key
 #                 Field('procedure_name', 'string'),
 #                 Field('procedure_code', 'text', required=True),
 #                 Field('last_updated', 'datetime', default=get_time(), required=True),
@@ -138,17 +149,19 @@ def load_procedure():
 @action('load_outputs')
 @action.uses(url_signer.verify(), db)
 def load_outputs():
-    rows = db(db.device_outputs.device_id == currently_viewing_device_id ).select(orderby=~db.device_outputs.received_time_stamp).as_list()
-    print("printed from slugIOT server - loaded output table: ", rows)
+    rows = db(db.device_outputs.device_id == currently_viewing_device_id).select(
+        orderby=~db.device_outputs.received_time_stamp).as_list()
+    print("\n printed from slugIOT server - loaded output table: ", rows)
     return dict(rows=rows)
 
 
 @action('load_logs')
 @action.uses(url_signer.verify(), db)
 def load_logs():
-    print("currently_viewing_device_id", currently_viewing_device_id)
-    rows = db(db.device_logs.device_id == currently_viewing_device_id).select(orderby=~db.device_logs.received_time_stamp).as_list()
-    print("printed from slugIOT server - loaded logs table: ", rows)
+    print("\n currently_viewing_device_id = ", currently_viewing_device_id)
+    rows = db(db.device_logs.device_id == currently_viewing_device_id).select(
+        orderby=~db.device_logs.received_time_stamp).as_list()
+    print("\n printed from slugIOT server - loaded logs table: ", rows)
     return dict(rows=rows)
 
 
@@ -160,16 +173,6 @@ def load_logs():
 
 
 
-
-
-# @action('add_proc', method="POST")
-# @action.uses(url_signer.verify(), db)
-# def add_procedure():
-#     id = db.procedures_map.insert(
-#         device_id=request.json.get('device_id'),
-#         procedure_name=request.json.get('procedure_name'),
-#     )
-#     return dict(id=id)
 
 
 # @action('delete_procedure')

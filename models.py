@@ -54,11 +54,11 @@ db.define_table('procedure_revisions',
 
 db.define_table('procedure',
                 Field('device_id', 'reference device', required=True),
-                Field('procedure_id', 'string', required=True),  # key
+                Field('procedure_id', 'string'),  # key
                 Field('procedure_name', 'string'),
                 Field('procedure_code', 'text', required=True),
                 Field('last_updated', 'datetime', default=get_time(), required=True),
-                Field('is_deployed', 'boolean', required=True)
+                # Field('is_deployed', 'boolean', required=True) //TODO
                 )
 
 ##############
