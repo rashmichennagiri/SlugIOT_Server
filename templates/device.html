@@ -1,7 +1,266 @@
 [[extend 'layout.html']]
 
+[[block page_head]]
+<link href="css/codemirror.css" rel="stylesheet">
+[[end]]
 
-<section class="section">
-  <h1 class="title">Device:</h1>
-  [[=form]]
-</section>
+
+<style>
+[v-cloak] {
+     display: none;
+}
+
+
+
+
+</style>
+
+
+<div class="section" id="vue-target-individual-device" v-cloak>
+
+    <div class="container block">
+
+        <!--        <div class="box">-->
+        <!--            <section class="hero is-small is-info">-->
+        <!--                <div class="hero-body">-->
+        <!--                    <p class="title">-->
+        <!--                        {{rows[0].device_nickname}} (# {{device_id}})-->
+        <!--                    </p>-->
+        <!--                    <p class="subtitle">-->
+        <!--                        &lt;!&ndash; {{rows}} &ndash;&gt;-->
+        <!--                        {{rows[0].description}}-->
+        <!--                    </p>-->
+        <!--                </div>-->
+        <!--            </section>-->
+
+        <!--            <table class="table is-striped is-fullwidth">-->
+        <!--                <tr>-->
+        <!--                    <td><b>MAC address:</b></td>-->
+        <!--                    <td> {{rows[0].device_mac_address}}</td>-->
+        <!--                </tr>-->
+
+        <!--                <tr>-->
+        <!--                    <td><b>Full Name:</b></td>-->
+        <!--                    <td> {{rows[0].device_name}}</td>-->
+        <!--                </tr>-->
+
+        <!--            </table>-->
+        <!--        </div>-->
+
+
+        <div class="box">
+            <section class="hero is-small is-info">
+                <div class="hero-body">
+                    <p class="title">
+                        Procedure
+                    </p>
+                    <p class="subtitle">
+                        You can write your own procedure to run on the device right here:
+                        <br>
+                        Be sure to save your work by clicking on the save button!
+                    </p>
+                </div>
+            </section>
+            <div class="components-container">
+                <aside>Edit your code here:</aside>
+                <textarea v-bind="procedure_code" class="code-input" id="codearea">/* your code here */
+                </textarea>
+            </div>
+
+            <aside>Last edited on:</aside>
+
+            <input @click="save_procedure" class="button is-info" type="submit" value="Save">
+            <input @click="deploy_procedure" class="button is-danger" type="submit" value="Deploy">
+            <!-- TODO add 'are you sure?' message-->
+            <!--save button @click="fetch_latest_procedure"-->
+            <!--deploy button-->
+        </div>
+
+
+        <div class="box">
+            <section class="hero is-small is-info">
+                <div class="hero-body">
+                    <p class="title">
+                        Outputs
+                    </p>
+                    <p class="subtitle">
+                        Table of all device outputs so far
+                    </p>
+                </div>
+            </section>
+            <!-- table of outputs -->
+            <table class="table is-striped is-fullwidth">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Field Name</th>
+                    <th>Description</th>
+                    <th>Output Value</th>
+                    <th>Comments</th>
+                    <th>Procedure ID</th>
+                    <th>Tag</th>
+                </tr>
+                <tr v-bind="outputs" v-for="o in outputs">
+                    <td> {{o.time_stamp}}</td>
+                    <td> {{o.field_name}}</td>
+                    <td> {{o.description}}</td>
+                    <td> {{o.output_value}}</td>
+                    <td> {{o.comments}}</td>
+                    <td> {{o.procedure_id}}</td>
+                    <td> {{o.tag}}</td>
+                </tr>
+            </table>
+            <!--            <section>-->
+            <!--                <p>-->
+            <!--                    Click to send the current set of outputs to the SlugIOT Server:-->
+            <!--                </p>-->
+            <!--                <input @click="sync_outputs" class="button is-primary"-->
+            <!--                       title="Send outputs to SlugIOT Server" type="submit"-->
+            <!--                       value="Sync Outputs">-->
+            <!--            </section>-->
+            <!--            <br>-->
+            <!--            <div class="content" v-if="outputs.length==0">-->
+            <!--                <blockquote class="is-danger">-->
+            <!--                    Outputs transferred to the SlugIOT Server.-->
+            <!--                    <br>-->
+            <!--                    Please refer to the SlugIOT Server to view archived outputs.-->
+            <!--                </blockquote>-->
+            <!--            </div>-->
+
+
+        </div>
+
+        <div class="box">
+            <section class="hero is-small is-info">
+                <div class="hero-body">
+                    <p class="title">
+                        Logs
+                    </p>
+                    <p class="subtitle">
+                        Log of all errors and warnings
+                    </p>
+                </div>
+            </section>
+            <!-- table of logs -->
+            <table class="table is-striped is-fullwidth">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Log Level</th>
+                    <th>Message</th>
+                    <th>Procedure ID</th>
+                </tr>
+                <tr v-bind="logs" v-for="r in logs">
+                    <td> {{r.time_stamp}}</td>
+                    <td> {{r.log_level}}</td>
+                    <td> {{r.log_message}}</td>
+                    <td> {{r.procedure_id}}</td>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!--<div class="section" id="vue-target" v-cloak>-->
+
+<!--    <div class="container block" v-if="add_mode">-->
+<!--        <div class="form">-->
+<!--            <div class="field">-->
+<!--                <label class="label">Device ID:</label>-->
+<!--                <div class="control">-->
+<!--                    <input class="input" type="text" v-model="device_id">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="field">-->
+<!--                <label class="label">Procedure:</label>-->
+<!--                <div class="control">-->
+<!--                    <input class="input" type="text" v-model="procedure_name">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="field">-->
+<!--                <div class="control">-->
+<!--                    <input @click="add_procedure" class="button is-primary" type="submit" value="Add">-->
+<!--                    <input @click="set_add_status(false)" class="button is-warning" type="submit" value="Cancel">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+<!--    <div class="container block">-->
+<!--        <h1 class="title">Procedures</h1>-->
+<!--        <table class="table is-striped is-fullwidth">-->
+<!--            <tr>-->
+<!--                <th>Device ID</th>-->
+<!--                <th>Procedure (Click on the code to edit)</th>-->
+<!--                <th></th>-->
+<!--            </tr>-->
+<!--            <tr v-for="r in rows">-->
+<!--                <td>-->
+<!--                    {{r.device_id}}-->
+<!--                </td>-->
+<!--                <td v-for="fn in ['procedure_name']">-->
+<!--                    <div :class="{'is-loading': r._state[fn] === 'pending'}" class="control">-->
+<!--                        <input :class="{-->
+<!--                'is-focused': r._state[fn] === 'edit',-->
+<!--                'is-static': r._state[fn] === 'clean',-->
+<!--              }" :readonly="r._state[fn] === 'clean'" @blur="stop_edit(r._idx, fn)"-->
+<!--                               @click="start_edit(r._idx, fn)"-->
+<!--                               class="input"-->
+<!--                               type="text"-->
+<!--                               v-model="r[fn]"-->
+<!--                        />-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <button @click="delete_contact(r._idx)" class="button is-danger">-->
+<!--                        <i class="fa fa-trash"></i></button>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--        </table>-->
+<!--        <button @click="set_add_status(true)" class="button is-primary">-->
+<!--            <i class="fa fa-plus fa-fw"></i> Add Procedure-->
+<!--        </button>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+
+[[block page_scripts]]
+
+<!--  let add_proc_url = "[[=XML(add_proc_url)]]";-->
+<!--  let load_procs_url = "[[=XML(load_procs_url)]]";-->
+<!--  let edit_proc_url = "[[=XML(edit_proc_url)]]";-->
+<!--  let delete_proc_url = "[[=XML(delete_proc_url)]]";-->
+
+<!-- Loads the index-specific js for Vue -->
+<script>
+    let load_procedure_url = "[[=XML(load_procedure_url)]]";
+    let load_logs_url = "[[=XML(load_logs_url)]]";
+    let load_outputs_url = "[[=XML(load_outputs_url)]]";
+</script>
+<script src="js/device_vue.js"></script>
+
+
+<!-- Loads the codemirror related js files -->
+<script src="js/codemirror.js" type="text/javascript"></script>
+<script src="components/codemirror/mode/python/python.js" type="text/javascript"></script>
+<script>
+var editor = CodeMirror.fromTextArea(document.getElementById("codearea"), {
+        lineNumbers: true,
+        styleActiveLine: true,
+
+        matchBrackets: true,
+        mode: 'python'
+    });
+
+<!--editor.setOption("mode", "python");-->
+
+
+
+
+</script>
+
+[[end]]

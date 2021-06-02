@@ -7,27 +7,36 @@
         <table class="table is-striped is-fullwidth">
             <tr>
                 <th>Device Id</th>
-                <th>Device Name</th>
+                <th>Nickname</th>
+                <th>MAC Address</th>
+                <th>Full Name</th>
                 <th>Description</th>
-                <th>Device Owner</th>
-                <th>Device Added On</th>
+                <th>Owner</th>
+                <th>Device Registration Date</th>
                 <th></th>
                 <th></th>
             </tr>
-            [[for row in rows:]]
+            [[for row in rows_devices:]]
             <tr>
-                <td>[[=row.id]]</td>
+                <td>
+                    <a class="button is-info is-light" href="[[=URL('device', row.id)]]">
+                        [[=row.id]]
+                    </a>
+
+                </td>
+                <td>[[=row.device_nickname]]</td>
+                <td>[[=row.device_mac_address]]</td>
                 <td>[[=row.device_name]]</td>
                 <td>[[=row.description]]</td>
                 <td>[[=row.user_email]]</td>
                 <td>[[=row.device_added_date]]</td>
                 <td>
-                    <a class="button" href="[[=URL('edit_product', row.id)]]">
+                    <a class="button is-warning is-light" href="[[=URL('edit_product', row.id)]]">
                         <i class="fa fa-fw fa-pencil"></i> Edit
                     </a>
                 </td>
                 <td>
-                    <a class="button" href="[[=URL('delete_product', row.id)]]">
+                    <a class="button is-danger is-light" href="[[=URL('delete_product', row.id)]]">
                         <i class="fa fa-fw fa-trash"></i> Delete
                     </a>
                 </td>

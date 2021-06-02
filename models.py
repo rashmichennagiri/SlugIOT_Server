@@ -16,21 +16,6 @@ def get_time():
     return datetime.datetime.utcnow()
 
 
-db.define_table(
-    'product',
-    Field('product_name'),
-    Field('product_quantity', 'integer', requires=IS_INT_IN_RANGE(0, None), default=0),
-    Field('product_cost', 'float', requires=IS_FLOAT_IN_RANGE(0, None), default=0.),
-    Field('mail_order', 'boolean'),
-    Field('created_by', default=get_user_email),
-    Field('creation_date', 'datetime', default=get_time)
-)
-
-# We do not want these fields to appear in forms by default:
-db.product.id.readable = False
-db.product.created_by.readable = False
-db.product.creation_date.readable = False
-
 # To keep track of all the devices:
 db.define_table('device',
                 # Field('device_id', 'string', writable=False, required=True, default=uuid.uuid4()),
@@ -38,7 +23,7 @@ db.define_table('device',
                 Field('device_mac_address', 'string', required=True),
                 Field('device_nickname', 'string'),
                 Field('description', 'text'),
-                Field('device_added_date', 'datetime', default=get_time()),
+                Field('device_added_date', 'datetime', writable=False, default=get_time()),
                 Field('user_email', 'string', writable=False, required=True, default=get_user_email)
                 )
 
@@ -52,18 +37,28 @@ db.device.user_email.readable = False
 
 # with this new split table definition it makes sense to just use the automatic id in this table as the procedure_id
 # Name of procedure used for file on client should be unique per device_id
-db.define_table('procedures',
+db.define_table('procedures_map',
                 Field('device_id', 'string', required=True),
                 Field('procedure_name', 'string', required=True)
                 )
 
+
 db.define_table('procedure_revisions',
                 Field('procedure_id', 'bigint', required=True),  # key
-                Field('procedure_data', 'text', required=True),
+                Field('procedure_code', 'text', required=True),
                 # Actual code for procedure - is check IS_LENGTH(65536) ok?
                 # Otherwise use string and specifiy larger length
-                Field('last_update', 'datetime', default=datetime.datetime.utcnow(), required=True),
+                Field('last_update', 'datetime', default=get_time(), required=True),
                 Field('is_stable', 'boolean', required=True)  # True for stable False for not stable
+                )
+
+db.define_table('procedure',
+                Field('device_id', 'reference device', required=True),
+                Field('procedure_id', 'string', required=True),  # key
+                Field('procedure_name', 'string'),
+                Field('procedure_code', 'text', required=True),
+                Field('last_updated', 'datetime', default=get_time(), required=True),
+                Field('is_deployed', 'boolean', required=True)
                 )
 
 ##############
@@ -91,14 +86,14 @@ db.define_table('client_setting',
                 Field('procedure_id'),  # Can be Null for device-wide settings.
                 Field('setting_name'),
                 Field('setting_value'),  # Encoded in json-plus.
-                Field('last_updated', 'datetime', update=datetime.datetime.utcnow())
+                Field('last_updated', 'datetime')
                 )
 
-#########################
+##################################################
 # These tables are synched "up" from the clients to the server.
 
 # Synched client -> server
-db.define_table('logs',
+db.define_table('device_logs',
                 Field('device_id'),
                 Field('procedure_id'),  ## MOVE TO procedure_id
                 Field('log_level', 'integer'),  # int, 0 = most important.
@@ -108,11 +103,13 @@ db.define_table('logs',
                 )
 
 # Synched client -> server
-db.define_table('outputs',
+db.define_table('device_outputs',
                 Field('device_id'),
                 Field('procedure_id'),
-                Field('name'),  # Name of variable
+                Field('field_name'),  # Name of variable
+                Field('description'),
                 Field('output_value', 'text'),  # Json, short please
+                Field('comments'),
                 Field('tag'),
                 Field('time_stamp', 'datetime'),
                 Field('received_time_stamp', 'datetime', default=datetime.datetime.utcnow()),

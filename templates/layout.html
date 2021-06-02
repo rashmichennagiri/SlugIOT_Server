@@ -80,8 +80,8 @@
                     General
                 </p>
                 <ul class="menu-list">
-                    <li><a class="is-active">Dashboard</a></li>
-                    <li><a>My Profile</a></li>
+                    <li><a href="[[=URL('index')]]">Dashboard</a></li>
+                    <li><a href="[[=URL('auth/profile')]]">My Profile</a></li>
                     <!--                    <li><a>Other</a></li>-->
                 </ul>
                 <p class="menu-label">
@@ -92,9 +92,9 @@
                     <li>
                         <a>Manage Your Devices</a>
                         <ul>
-                            <li><a>View Devices</a></li>
-                            <li><a>Code Editor</a></li>
-                            <li><a>Register New Device</a></li>
+                            <li><a href="[[=URL('view_devices')]]">View Devices</a></li>
+                            <li><a href="[[=URL('edit_code')]]">Code Editor</a></li>
+                            <li><a href="[[=URL('add_device')]]">Register New Device</a></li>
                             <!--                            <li><a>Remove a Device</a></li>-->
                         </ul>
                     </li>

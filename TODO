@@ -1,9 +1,48 @@
+DOUBTS:
+
+
+// TODO SERVER:
+FEATURES:
+x let user choose language for editor
+x pagination for output and log display tables in device.html
+x one device to have >1 procedures
+x remove 'app_device.decorate' function
+x POST requests to be redirected as GETs
+
+
 AUTH:
-x login
-x security
+x remove menu bar during login/register
+x check that pages can be view only to logged in users (device load output urls)
+
+UI:
+x make footer smaller
 x breadcrumbs
 
-x remove space after footer
-
 DATABASE:
-x define the tables that need to be synched "down", for settings, and procedures.
+
+
+
+// TODO CLIENT:
+- check if 'output_synced' table is needed to hold old data?
+- can remove for loop to sync output table?
+- bring all common variables in js (urls, tablenames) to another config file
+- reduce code repitition, make common methods
+- *MIMIC DEVICE -> continuously writes to output/log files
+- add scheduler
+
+
+// TODO BUILD:
+x makefiles for both server and client
+
+
+
+FUNCTIONS OF SLUGIOT SERVER:
+1. user login
+2. dashboard
+    - show all devices for that user
+    - for each device
+        - show outputs
+        - show logs
+        - show code installed
+        - edit, save and deploy new code
+        - (optional) edit and deploy device settings
